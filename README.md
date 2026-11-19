@@ -11,7 +11,7 @@ Os dois programas realizam a leitura da umidade do solo, o controle de um LED po
 | `codigo_wifi_comentado.ino` | Versão com ponto de acesso Wi-Fi e página web para monitoramento e controle. |
 | `cofigo_bluetooth_comentado.ino` | Versão com Bluetooth Clássico e comandos enviados por terminal serial. |
 
-> Cada arquivo é um programa independente. Carregue **apenas uma versão por vez** no ESP32. Na Arduino IDE, é possível abrir o arquivo `.ino` ou colocá-lo em uma pasta de sketch com o mesmo nome do arquivo.
+> Cada arquivo é um programa independente. Carregue **apenas uma versão por vez** no ESP32. 
 
 ## Componentes e conexões
 

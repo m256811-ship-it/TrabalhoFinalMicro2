@@ -1,8 +1,7 @@
 //Configurações do projeto
 //Inclui as bibliotecas responsáveis pelo funcionamento do ESP32 e pela comunicação Bluetooth
-#include <Arduino.h>
 #include <BluetoothSerial.h>
-#include <esp_arduino_version.h>
+
 
 // Verifica se a placa selecionada suporta Bluetooth Classico (ESP32 padrao)
 #if !defined(CONFIG_BT_ENABLED) || !defined(CONFIG_BLUEDROID_ENABLED)
@@ -41,12 +40,12 @@ constexpr uint8_t RELAY_OFF_LEVEL = (RELAY_ON_LEVEL == HIGH) ? LOW : HIGH;
 
 #define AUTO_START_HUMIDITY 35
 #define AUTO_STOP_HUMIDITY 60
-#define MAX_PUMP_TIME 15000UL   // Tempo maximo continuo ligado (15s)
-#define AUTO_COOLDOWN 15000UL   // Intervalo minimo entre ciclos automaticos (15s)
+#define MAX_PUMP_TIME 4000UL   // Tempo maximo continuo ligado (4s)
+#define AUTO_COOLDOWN 4000UL   // Intervalo minimo entre ciclos automaticos (4s)
 
 // Vazao estimada da bomba.
-// 3.0 ml/s 
-constexpr float PUMP_FLOW_ML_PER_SECOND = 3.0f;
+// 0.25 ml/s 
+constexpr float PUMP_FLOW_ML_PER_SECOND = 0.25f;
 
 //Configuração do nome utilizado para identificar o ESP32 na conexão Bluetooth
 
@@ -336,8 +335,8 @@ void sendBluetoothHelp() {
   if (!SerialBT.hasClient()) return;
 
   SerialBT.println("\n=== COMANDOS - REGA DO BONSAI ===");
-  SerialBT.println("5      -> Regar por 5s (modo manual)");
-  SerialBT.println("10     -> Regar por 10s (modo manual)");
+  SerialBT.println("2      -> Regar por 2s (modo manual)");
+  SerialBT.println("4      -> Regar por 4s (modo manual)");
   SerialBT.println("parar  -> Parar rega manual (ou digite 0)");
   SerialBT.println("modo   -> Alternar Manual / Automatico (ou m)");
   SerialBT.println("status -> Ver leitura e estado atual (ou s)");
@@ -383,7 +382,7 @@ void sendBluetoothStatus() {
   SerialBT.print(" ml | Ciclos: ");
   SerialBT.print(irrigationCount);
   SerialBT.print(" (base sem calibracao: ");
-  SerialBT.print(PUMP_FLOW_ML_PER_SECOND, 1);
+  SerialBT.print(PUMP_FLOW_ML_PER_SECOND, 2);
   SerialBT.print(" ml/s ~");
   SerialBT.print(estimatedLitersPerHour, 1);
   SerialBT.println(" L/h)");
@@ -399,10 +398,10 @@ void processCommand(String cmd) {
   Serial.print("[CMD] Comando recebido: ");
   Serial.println(cmd);
 
-  if (cmd == "5" || cmd == "regar5") {
-    startManualWatering(5);
-  } else if (cmd == "10" || cmd == "regar10") {
-    startManualWatering(10);
+  if (cmd == "2" || cmd == "regar2") {
+    startManualWatering(2);
+  } else if (cmd == "4" || cmd == "regar4") {
+    startManualWatering(4);
   } else if (cmd == "0" || cmd == "parar" || cmd == "stop") {
     if (!autoMode && pumpOn) {
       setPump(false, "Manual: rega interrompida pelo usuario");

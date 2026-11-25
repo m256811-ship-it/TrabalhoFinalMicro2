@@ -9,7 +9,7 @@ Os dois programas realizam a leitura da umidade do solo, o controle de um LED po
 | Arquivo | Descrição |
 | --- | --- |
 | `codigo_wifi_comentado.ino` | Versão com ponto de acesso Wi-Fi e página web para monitoramento e controle. |
-| `cofigo_bluetooth_comentado.ino` | Versão com Bluetooth Clássico e comandos enviados por terminal serial. |
+| `codigo_bluetooth_comentado.ino` | Versão com Bluetooth Clássico e comandos enviados por terminal serial. |
 
 > Cada arquivo é um programa independente. Carregue **apenas uma versão por vez** no ESP32. 
 
@@ -20,7 +20,7 @@ O código considera os seguintes componentes:
 - ESP32 com suporte aos recursos utilizados;
 - sensor analógico de umidade do solo;
 - LED e resistor de 240 Ω;
-- módulo relé e transistor NPN para acionamento;
+- módulo relé e transistor NPN (com resistor de base de 1 kΩ) para acionamento;
 - bomba d'água e fonte de alimentação adequada.
 
 | Elemento | Pino do ESP32 | Função |
@@ -29,7 +29,7 @@ O código considera os seguintes componentes:
 | Relé, via transistor NPN | GPIO 26 | Comando de acionamento da bomba |
 | LED, via resistor de 240 Ω | GPIO 5 | Controle de brilho por PWM |
 
-**Acionamento do relé:** os programas foram escritos para um circuito com transistor NPN e módulo relé acionado em nível baixo na entrada `IN`. O sinal `HIGH` do GPIO 26 faz o transistor conduzir e aciona o relé; o sinal `LOW` desliga o acionamento. A ligação deve seguir o circuito efetivamente montado, incluindo resistor de base de 1 kΩ. Não conecte a bomba diretamente a um GPIO do ESP32; verifique também a alimentação, o terra comum onde necessário e os limites elétricos do módulo relé.
+**Acionamento do relé:** os programas foram escritos para um circuito com transistor NPN e módulo relé acionado em nível baixo na entrada `IN`. O sinal `HIGH` (3,3 V) do GPIO 26 faz o transistor conduzir, puxa `IN` para 0 V e aciona o relé; o sinal `LOW` (0 V) corta o transistor e desliga o acionamento. A ligação deve seguir o circuito efetivamente montado, incluindo resistor de base de 1 kΩ. Não conecte a bomba diretamente a um GPIO do ESP32; verifique também a alimentação, o terra comum onde necessário e os limites elétricos do módulo relé.
 
 ## Funcionamento
 
@@ -46,7 +46,7 @@ Esses valores devem ser ajustados a partir de medições reais do sensor. O LED 
 
 ### Modos de irrigação
 
-**Manual:** permite ligar a bomba por **5 ou 10 segundos** e interromper a irrigação antes do término. Os comandos de acionamento manual não são executados no modo automático.
+**Manual:** permite ligar a bomba por **2 ou 4 segundos** e interromper a irrigação antes do término. Os comandos de acionamento manual não são executados no modo automático.
 
 **Automático:** utiliza os seguintes parâmetros, definidos nos dois códigos:
 
@@ -54,13 +54,13 @@ Esses valores devem ser ajustados a partir de medições reais do sensor. O LED 
 | --- | --- |
 | Umidade para iniciar a irrigação | Abaixo de 35% |
 | Umidade para interromper a irrigação | A partir de 60% |
-| Tempo máximo contínuo da bomba | 15 segundos |
-| Intervalo mínimo entre ciclos automáticos | 15 segundos |
+| Tempo máximo contínuo da bomba | 4 segundos |
+| Intervalo mínimo entre ciclos automáticos | 4 segundos |
 | Intervalo de leitura do sensor e avaliação automática | 1 segundo |
 
 Os limites de tempo são tratados por `handleTimersAndSafety()`, enquanto `handleAutomaticIrrigation()` avalia as condições para irrigação automática.
 
-O volume de água é **estimado** pelo tempo de acionamento e por uma vazão de referência de `5,0 mL/s`. Os programas não medem a vazão real da bomba; portanto, o volume exibido depende de calibração física. O estado da bomba apresentado nas interfaces corresponde ao **estado comandado pelo software**, não a uma confirmação independente de fluxo de água.
+O volume de água é **estimado** pelo tempo de acionamento e por uma vazão de referência de `0,25 mL/s` (`~0,9 L/h`). Os programas não medem a vazão real da bomba; portanto, o volume exibido depende de calibração física. O estado da bomba apresentado nas interfaces corresponde ao **estado comandado pelo software**, não a uma confirmação independente de fluxo de água.
 
 ## Versão Wi-Fi
 
@@ -75,12 +75,12 @@ A versão Wi-Fi utiliza as bibliotecas `WiFi.h` e `WebServer.h`. O ESP32 cria um
 
 Para utilizar:
 
-1. Carregue `codigo_wifi_final(1).ino` no ESP32.
+1. Carregue `codigo_wifi_comentado.ino` no ESP32.
 2. Conecte um celular ou computador à rede **Irrigação feliz**, utilizando a senha definida no código.
 3. Abra um navegador e acesse o endereço IP mostrado no Monitor Serial do ESP32 (115200 baud).
 4. Utilize os botões da página para consultar a umidade, alternar o modo de funcionamento e controlar a irrigação manual.
 
-O programa atende às rotas `GET /`, `POST /water5`, `POST /water10`, `POST /stop` e `POST /mode`. A interface é montada por `buildPage()` e possui **atualização automática a cada 3 segundos**, definida no HTML.
+O programa atende às rotas `GET /`, `POST /water2`, `POST /water4`, `POST /stop` e `POST /mode`. A interface é montada por `buildPage()` e possui **atualização automática a cada 3 segundos**, definida no HTML.
 
 > O nome e a senha da rede são valores de demonstração definidos diretamente no código. Altere-os caso necessário antes de utilizar o sistema em outro ambiente.
 
@@ -96,15 +96,15 @@ O dispositivo é anunciado com o nome:
 
 Para utilizar:
 
-1. Carregue `cofigo_bluetooth_final(1).ino` em um ESP32 compatível.
+1. Carregue `codigo_bluetooth_comentado.ino` em um ESP32 compatível.
 2. Faça o pareamento com **Irrigacao Bonsai** em um dispositivo e aplicativo terminal compatíveis com Bluetooth Clássico SPP.
 3. No terminal, configure o envio dos comandos com **quebra de linha (`\n`)**.
 4. Envie os comandos abaixo para controlar o sistema.
 
 | Comando | Ação |
 | --- | --- |
-| `5` ou `regar5` | Irrigar por 5 segundos no modo manual |
-| `10` ou `regar10` | Irrigar por 10 segundos no modo manual |
+| `2` ou `regar2` | Irrigar por 2 segundos no modo manual |
+| `4` ou `regar4` | Irrigar por 4 segundos no modo manual |
 | `0`, `parar` ou `stop` | Interromper a irrigação manual |
 | `m` ou `modo` | Alternar entre os modos manual e automático |
 | `s` ou `status` | Exibir as informações do sistema |
@@ -134,7 +134,7 @@ Antes de carregar o programa, selecione a placa ESP32 correta, verifique a porta
 ## Observações
 
 - A calibração do sensor (`VAL_SECO` e `VAL_MOLHADO`) deve ser realizada conforme o dispositivo utilizado.
-- A vazão da bomba é um valor estimado, não uma medição direta.
+- A vazão da bomba (`0,25 mL/s`) é um valor estimado, não uma medição direta.
 - O acionamento do relé depende do circuito de transistor NPN previsto nos códigos.
 - Os parâmetros de irrigação e os tempos de segurança podem ser alterados nas constantes de configuração dos programas.
 - As duas implementações representam alternativas de comunicação para o mesmo sistema, não programas destinados a funcionar simultaneamente.

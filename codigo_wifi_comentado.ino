@@ -1,9 +1,7 @@
 //Configurações do projeto
 //Inclui as bibliotecas responsáveis pelo funcionamento do ESP32 e pela comunicação Wi-Fi
-#include <Arduino.h>
 #include <WiFi.h>
-#include <WebServer.h>
-#include <esp_arduino_version.h>
+#include <WebServer.h>   
 
 //Configuração do nível lógico utilizado para ligar e desligar a bomba pelo transistor NPN
 // Transistor NPN conectado ao pino RELAY_PIN via resistor de base (1 kOhm):
@@ -37,12 +35,12 @@ constexpr uint8_t RELAY_OFF_LEVEL = (RELAY_ON_LEVEL == HIGH) ? LOW : HIGH;
 
 #define AUTO_START_HUMIDITY 35
 #define AUTO_STOP_HUMIDITY 60
-#define MAX_PUMP_TIME 15000UL   // Tempo maximo continuo ligado (15s)
-#define AUTO_COOLDOWN 15000UL   // Intervalo minimo entre ciclos automaticos (15s)
+#define MAX_PUMP_TIME 4000UL   // Tempo maximo continuo ligado (4s)
+#define AUTO_COOLDOWN 4000UL   // Intervalo minimo entre ciclos automaticos (4s)
 
 // Vazao estimada da bomba
-// 3.0 ml/s 
-constexpr float PUMP_FLOW_ML_PER_SECOND = 3.0f;
+// 0.25 ml/s 
+constexpr float PUMP_FLOW_ML_PER_SECOND = 0.25f;
 
 //Configuração do nome e da senha da rede Wi-Fi criada pelo ESP32
 
@@ -477,8 +475,8 @@ String buildPage() {
     if (pumpOn) {
       html += "<form action='/stop' method='POST'><button class='btn-red'>Parar rega</button></form>";
     } else {
-      html += "<form action='/water5' method='POST'><button class='btn-green'>Regar 5s</button></form>";
-      html += "<form action='/water10' method='POST'><button class='btn-green'>Regar 10s</button></form>";
+      html += "<form action='/water2' method='POST'><button class='btn-green'>Regar 2s</button></form>";
+      html += "<form action='/water4' method='POST'><button class='btn-green'>Regar 4s</button></form>";
     }
   }
 
@@ -488,7 +486,7 @@ String buildPage() {
   if (autoMode) {
     html += "Modo automático ativo. O estado exibido indica o comando enviado ao relé (sem sensor de vazão).";
   } else {
-    html += "Modo manual ativo. Você pode comandar a rega por 5 ou 10 segundos (sem sensor de vazão).";
+    html += "Modo manual ativo. Você pode comandar a rega por 2 ou 4 segundos (sem sensor de vazão).";
   }
   html += "</div>";
 
@@ -528,26 +526,26 @@ void handleRoot() {
   server.send(200, "text/html", buildPage());
 }
 
-//Recebe o comando enviado pelo botão de irrigação por 5 segundos. Inicia a bomba apenas no modo manual e retorna à página principal.
-void handleWater5() {
-  Serial.println("[HTTP] Comando recebido: POST /water5");
+//Recebe o comando enviado pelo botão de irrigação por 2 segundos. Inicia a bomba apenas no modo manual e retorna à página principal.
+void handleWater2() {
+  Serial.println("[HTTP] Comando recebido: POST /water2");
   if (!autoMode) {
-    startManualWatering(5);
+    startManualWatering(2);
   } else {
-    Serial.println("[HTTP] /water5 ignorado: sistema em modo automatico.");
+    Serial.println("[HTTP] /water2 ignorado: sistema em modo automatico.");
   }
 
   server.sendHeader("Location", "/");
   server.send(303);
 }
 
-//Recebe o comando enviado pelo botão de irrigação por 10 segundos. Inicia a bomba apenas no modo manual e retorna à página principal.
-void handleWater10() {
-  Serial.println("[HTTP] Comando recebido: POST /water10");
+//Recebe o comando enviado pelo botão de irrigação por 4 segundos. Inicia a bomba apenas no modo manual e retorna à página principal.
+void handleWater4() {
+  Serial.println("[HTTP] Comando recebido: POST /water4");
   if (!autoMode) {
-    startManualWatering(10);
+    startManualWatering(4);
   } else {
-    Serial.println("[HTTP] /water10 ignorado: sistema em modo automatico.");
+    Serial.println("[HTTP] /water4 ignorado: sistema em modo automatico.");
   }
 
   server.sendHeader("Location", "/");
@@ -623,8 +621,8 @@ void setup() {
   delay(500);
 
   server.on("/", HTTP_GET, handleRoot);
-  server.on("/water5", HTTP_POST, handleWater5);
-  server.on("/water10", HTTP_POST, handleWater10);
+  server.on("/water2", HTTP_POST, handleWater2);
+  server.on("/water4", HTTP_POST, handleWater4);
   server.on("/stop", HTTP_POST, handleStop);
   server.on("/mode", HTTP_POST, handleMode);
   server.onNotFound(handleNotFound);

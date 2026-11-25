@@ -19,7 +19,7 @@ O código considera os seguintes componentes:
 
 - ESP32 com suporte aos recursos utilizados;
 - sensor analógico de umidade do solo;
-- LED e resistor de 330 Ω;
+- LED e resistor de 240 Ω;
 - módulo relé e transistor NPN para acionamento;
 - bomba d'água e fonte de alimentação adequada.
 
@@ -27,7 +27,7 @@ O código considera os seguintes componentes:
 | --- | --- | --- |
 | Sensor de umidade | GPIO 35 | Leitura analógica (ADC) |
 | Relé, via transistor NPN | GPIO 26 | Comando de acionamento da bomba |
-| LED, via resistor de 330 Ω | GPIO 5 | Controle de brilho por PWM |
+| LED, via resistor de 240 Ω | GPIO 5 | Controle de brilho por PWM |
 
 **Acionamento do relé:** os programas foram escritos para um circuito com transistor NPN e módulo relé acionado em nível baixo na entrada `IN`. O sinal `HIGH` do GPIO 26 faz o transistor conduzir e aciona o relé; o sinal `LOW` desliga o acionamento. A ligação deve seguir o circuito efetivamente montado, incluindo resistor de base de 1 kΩ. Não conecte a bomba diretamente a um GPIO do ESP32; verifique também a alimentação, o terra comum onde necessário e os limites elétricos do módulo relé.
 

@@ -49,7 +49,7 @@ constexpr float PUMP_FLOW_ML_PER_SECOND = 0.25f;
 
 //Configuração do nome utilizado para identificar o ESP32 na conexão Bluetooth
 
-#define BT_DEVICE_NAME "Irrigacao Bonsai"
+#define BT_DEVICE_NAME "Irrigacao feliz"
 
 //Declaração dos objetos e das variáveis utilizadas para armazenar as leituras e os estados do sistema
 

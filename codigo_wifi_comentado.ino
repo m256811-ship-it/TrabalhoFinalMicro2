@@ -15,7 +15,7 @@ constexpr uint8_t RELAY_OFF_LEVEL = (RELAY_ON_LEVEL == HIGH) ? LOW : HIGH;
 #define SENSOR_PIN 35
 #define RELAY_PIN 26  
 
-// GPIO5 -> resistor de 330 ohms -> anodo do LED.
+// GPIO5 -> resistor de 240 ohms -> anodo do LED.
 // Catodo do LED -> GND.
 // Configurações do PMW do led 
 #define LED_PWM_PIN 5

@@ -20,7 +20,7 @@ O código considera os seguintes componentes:
 - ESP32 com suporte aos recursos utilizados;
 - sensor analógico de umidade do solo;
 - LED e resistor de 240 Ω;
-- módulo relé e transistor NPN (com resistor de base de 1 kΩ) para acionamento;
+- módulo relé e transistor NPN (com resistor de base de 1 kΩ e resistor de 10kΩ como pulldown) para acionamento;
 - bomba d'água e fonte de alimentação adequada.
 
 | Elemento | Pino do ESP32 | Função |
@@ -91,13 +91,13 @@ A versão Bluetooth utiliza `BluetoothSerial.h` para comunicação por **Bluetoo
 O dispositivo é anunciado com o nome:
 
 ```cpp
-#define BT_DEVICE_NAME "Irrigacao Bonsai"
+#define BT_DEVICE_NAME "Irrigacao feliz"
 ```
 
 Para utilizar:
 
 1. Carregue `codigo_bluetooth_comentado.ino` em um ESP32 compatível.
-2. Faça o pareamento com **Irrigacao Bonsai** em um dispositivo e aplicativo terminal compatíveis com Bluetooth Clássico SPP.
+2. Faça o pareamento com **Irrigacao feliz** em um dispositivo e aplicativo terminal compatíveis com Bluetooth Clássico SPP.
 3. No terminal, configure o envio dos comandos com **quebra de linha (`\n`)**.
 4. Envie os comandos abaixo para controlar o sistema.
 

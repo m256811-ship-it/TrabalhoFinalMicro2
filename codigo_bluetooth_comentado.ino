@@ -8,6 +8,10 @@
 #error "Bluetooth Classico nao habilitado nesta placa/configuracao (requer ESP32 padrao, nao S3/C3)."
 #endif
 
+// =========================================================================
+// >>> [BLOCO 1: HARDWARE, PINOS E CALIBRAÇÃO] <<<
+// =========================================================================
+
 //Configuração do nível lógico utilizado para ligar e desligar a bomba pelo transistor NPN
 // Transistor NPN conectado ao pino RELAY_PIN via resistor de base (1 kOhm):
 // - RELAY_PIN = HIGH (3.3V) -> transistor conduz -> puxa IN do rele para 0V -> LIGA bomba.
@@ -106,6 +110,10 @@ void applyRelayLevel(uint8_t level) {
   Serial.println(logMsg);
 }
 
+// =========================================================================
+// >>> [BLOCO 2: LEITURA DO SENSOR E ALERTA VISUAL NO LED PWM] <<<
+// =========================================================================
+
 //Sensor e estados
 
 //Converte a leitura analógica do sensor em um valor de umidade de 0 a 100%, utilizando os valores definidos na calibração.
@@ -198,6 +206,10 @@ void readSensor() {
   updateHumidityLed();
   humanMessage = getHumanMessage();
 }
+
+// =========================================================================
+// >>> [BLOCO 3: ACIONAMENTO DA BOMBA, MODOS E SEGURANÇA] <<<
+// =========================================================================
 
 //Bomba e registro de agua
 
@@ -328,6 +340,10 @@ void handleAutomaticIrrigation() {
   }
 }
 
+// =========================================================================
+// >>> [BLOCO 4: COMUNICAÇÃO E COMANDOS BLUETOOTH] <<<
+// =========================================================================
+
 //Funções responsáveis pelos comandos e pelas informações enviadas por Bluetooth
 
 //Envia para o dispositivo conectado a lista de comandos disponíveis para controlar e consultar o sistema.
@@ -440,6 +456,10 @@ void handleBluetoothAndSerialInputs() {
     processCommand(usbCmd);
   }
 }
+
+// =========================================================================
+// >>> [BLOCO 5: SETUP E LOOP PRINCIPAL (SEM TRAVAMENTO)] <<<
+// =========================================================================
 
 //Setup
 

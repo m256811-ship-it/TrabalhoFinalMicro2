@@ -64,7 +64,7 @@ unsigned long manualStartTime = 0;
 unsigned long manualDurationMs = 0;
 
 String lastPumpReason = "Sistema pronto";
-String humanMessage = "Me cuido sozinho";
+String humanMessage = "Auto irrigação";
 
 unsigned long lastSensorRead = 0;
 unsigned long pumpStartTime = 0;
